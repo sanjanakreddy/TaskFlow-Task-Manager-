@@ -1,41 +1,110 @@
 import React, { useState } from "react";
+import "./App.css";
 
 function App() {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
   const addTask = () => {
-    if (task.trim() === "") return;
-    setTasks([...tasks, task]);
+    if (!task.trim()) return;
+    setTasks([...tasks, { id: Date.now(), title: task, done: false }]);
     setTask("");
   };
 
-  const deleteTask = (index) => {
-    const updated = tasks.filter((_, i) => i !== index);
-    setTasks(updated);
-  };
+  const toggleTask = id =>
+    setTasks(tasks.map(t => t.id === id ? { ...t, done: !t.done } : t));
+
+  const deleteTask = id =>
+    setTasks(tasks.filter(t => t.id !== id));
+
+  const visible = tasks.filter(t =>
+    (filter === "all" || (filter === "completed" && t.done) ||
+      (filter === "pending" && !t.done)) &&
+    t.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const completed = tasks.filter(t => t.done).length;
 
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
-      <h2>TO-DO Application</h2>
+    <div className="app">
+      <header>
+        <div>
+          <h1>TaskFlow</h1>
+          <p>Student Task Management</p>
+        </div>
+        <div className="profile"><b>S</b> Student</div>
+      </header>
 
-      <input
-        type="text"
-        placeholder="Enter task"
-        value={task}
-        onChange={(e) => setTask(e.target.value)}
-      />
+      <section className="welcome">
+        <h2>Good Morning 👋</h2>
+        <p>Stay organized and complete your goals today.</p>
+      </section>
 
-      <button onClick={addTask}>Add</button>
+      <section className="stats">
+        <div><strong>{tasks.length}</strong><span>📋 Total Tasks</span></div>
+        <div><strong>{completed}</strong><span>✓ Completed</span></div>
+        <div><strong>{tasks.length - completed}</strong><span>⏳ Pending</span></div>
+      </section>
 
-      <ul style={{ listStyle: "none" }}>
-        {tasks.map((t, i) => (
-          <li key={i}>
-            {t}
-            <button onClick={() => deleteTask(i)}> ❌ </button>
-          </li>
-        ))}
-      </ul>
+      <main>
+        <h2>My Tasks</h2>
+        <p className="sub">Manage your daily activities</p>
+
+        <div className="add">
+          <input
+            value={task}
+            placeholder="Enter a new task..."
+            onChange={e => setTask(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && addTask()}
+          />
+          <button onClick={addTask}>+ Add Task</button>
+        </div>
+
+        <div className="toolbar">
+          <div>
+            {["all", "pending", "completed"].map(f => (
+              <button
+                className={filter === f ? "active" : ""}
+                onClick={() => setFilter(f)}
+                key={f}
+              >
+                {f[0].toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          <input
+            className="search"
+            placeholder="Search tasks..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+
+        <div className="tasks">
+          {visible.length ? visible.map(t => (
+            <div className={`task ${t.done ? "done" : ""}`} key={t.id}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={t.done}
+                  onChange={() => toggleTask(t.id)}
+                />
+                {t.title}
+              </label>
+              <button onClick={() => deleteTask(t.id)}>🗑</button>
+            </div>
+          )) : (
+            <div className="empty">📝<h3>No tasks found</h3>
+              <p>Add a task to get started.</p>
+            </div>
+          )}
+        </div>
+      </main>
+
+      <footer>© 2026 TaskFlow • Student Task Management System</footer>
     </div>
   );
 }
