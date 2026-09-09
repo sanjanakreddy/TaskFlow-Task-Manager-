@@ -3,24 +3,41 @@ import "./App.css";
 
 function App() {
   const [task, setTask] = useState("");
+  const [priority, setPriority] = useState("Medium");
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
+  const hour = new Date().getHours();
+
+const greeting =
+  hour < 12 ? "Good Morning ☀️" :
+  hour < 17 ? "Good Afternoon 🌤️" :
+  hour < 21 ? "Good Evening 🌆" :
+  "Good Night 🌙";
+
   const addTask = () => {
     if (!task.trim()) return;
-    setTasks([...tasks, { id: Date.now(), title: task, done: false }]);
+
+    setTasks([
+      ...tasks,
+      { id: Date.now(), title: task, done: false, priority }
+    ]);
+
     setTask("");
   };
 
   const toggleTask = id =>
-    setTasks(tasks.map(t => t.id === id ? { ...t, done: !t.done } : t));
+    setTasks(tasks.map(t =>
+      t.id === id ? { ...t, done: !t.done } : t
+    ));
 
   const deleteTask = id =>
     setTasks(tasks.filter(t => t.id !== id));
 
   const visible = tasks.filter(t =>
-    (filter === "all" || (filter === "completed" && t.done) ||
+    (filter === "all" ||
+      (filter === "completed" && t.done) ||
       (filter === "pending" && !t.done)) &&
     t.title.toLowerCase().includes(search.toLowerCase())
   );
@@ -29,6 +46,7 @@ function App() {
 
   return (
     <div className="app">
+
       <header>
         <div>
           <h1>TaskFlow</h1>
@@ -38,7 +56,7 @@ function App() {
       </header>
 
       <section className="welcome">
-        <h2>Good Morning 👋</h2>
+        <h2>{greeting}</h2>
         <p>Stay organized and complete your goals today.</p>
       </section>
 
@@ -59,6 +77,16 @@ function App() {
             onChange={e => setTask(e.target.value)}
             onKeyDown={e => e.key === "Enter" && addTask()}
           />
+
+          <select
+            value={priority}
+            onChange={e => setPriority(e.target.value)}
+          >
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+
           <button onClick={addTask}>+ Add Task</button>
         </div>
 
@@ -92,12 +120,18 @@ function App() {
                   checked={t.done}
                   onChange={() => toggleTask(t.id)}
                 />
-                {t.title}
+                <span>{t.title}</span>
+                <small className={t.priority.toLowerCase()}>
+                  {t.priority}
+                </small>
               </label>
+
               <button onClick={() => deleteTask(t.id)}>🗑</button>
             </div>
           )) : (
-            <div className="empty">📝<h3>No tasks found</h3>
+            <div className="empty">
+              📝
+              <h3>No tasks found</h3>
               <p>Add a task to get started.</p>
             </div>
           )}
@@ -105,6 +139,7 @@ function App() {
       </main>
 
       <footer>© 2026 TaskFlow • Student Task Management System</footer>
+
     </div>
   );
 }
