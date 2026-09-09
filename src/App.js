@@ -17,7 +17,10 @@ const greeting =
   "Good Night 🌙";
 
   const addTask = () => {
-    if (!task.trim()) return;
+    if (task.trim().length < 3) {
+  alert("Task must contain at least 3 characters.");
+  return;
+}
 
     setTasks([
       ...tasks,
