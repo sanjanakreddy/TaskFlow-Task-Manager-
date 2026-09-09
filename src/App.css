@@ -59,3 +59,43 @@ footer{text-align:center;color:#94a3b8;font-size:13px;margin:25px}
   .search{width:100%;margin-top:10px}
   header{padding:18px}
 }
+/* Task hover effect */
+.task {
+    transition: 0.2s;
+}
+
+.task:hover {
+    transform: translateY(-2px);
+}
+
+/* Buttons */
+button {
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+button:hover {
+    transform: scale(1.03);
+}
+
+/* Search box */
+.search input {
+    transition: 0.2s;
+}
+
+.search input:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(100, 100, 255, 0.3);
+}
+
+/* Task spacing */
+.task {
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* Smooth page appearance */
+body {
+    transition: 0.3s;
+}
