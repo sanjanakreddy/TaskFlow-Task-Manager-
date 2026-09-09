@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import "./App.css";
 
 function App() {
   const [task, setTask] = useState("");
   const [priority, setPriority] = useState("Medium");
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(
+    JSON.parse(localStorage.getItem("tasks")) || []
+  );
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
-
+  useEffect(()=> {
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+  },[tasks]);
   const hour = new Date().getHours();
 
 const greeting =
